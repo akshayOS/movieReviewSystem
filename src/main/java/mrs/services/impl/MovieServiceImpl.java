@@ -25,7 +25,7 @@ public class MovieServiceImpl implements MovieService {
                          buildMovieEntity(movieName, releaseYear, genreItem)));
             return true;
         } catch (RuntimeException e) {
-            throw new RuntimeException(e);
+            return false;
         }
     }
 
