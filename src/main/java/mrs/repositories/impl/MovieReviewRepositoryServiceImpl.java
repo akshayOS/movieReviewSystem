@@ -62,4 +62,12 @@ public class MovieReviewRepositoryServiceImpl implements MovieReviewRepositorySe
     public Double getAverageReviewScoreOfMovie(String movieName) {
     return movieReviewDetailsRepository.findAverageReviewScoreByMovieName(movieName);
     }
+
+    @Override
+    public Boolean ifReviewExist(String userName, String movieName) {
+         Optional<MovieReviewEntity> entity = movieReviewDetailsRepository.findFirstByUserNameAndMovieName(userName,movieName);
+         if(entity.isPresent())
+             return true;
+        return false;
+    }
 }
