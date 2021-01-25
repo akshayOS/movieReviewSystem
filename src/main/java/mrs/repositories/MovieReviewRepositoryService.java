@@ -17,4 +17,6 @@ public interface MovieReviewRepositoryService {
     Double getAverageReviewScoreInGenre(String genre);
 
     Double getAverageReviewScoreOfMovie(String movieName);
+
+    Boolean ifReviewExist(String userName, String movieName);
 }
