@@ -1,5 +1,6 @@
 package mrs.repositories.impl;
 
+import lombok.extern.log4j.Log4j2;
 import mrs.models.entity.UserEntity;
 import mrs.repositories.UserDetailsRepository;
 import mrs.repositories.UserRepositoryService;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
+@Log4j2
 public class UserRepositoryServiceImpl implements UserRepositoryService {
 
     private final UserDetailsRepository userDetailsRepository;
@@ -22,21 +24,23 @@ public class UserRepositoryServiceImpl implements UserRepositoryService {
     }
 
     public UserEntity upgradeUser(final UserEntity userEntity){
-        Optional<UserEntity> userEntityOptional = userDetailsRepository.findByName(userEntity.getName());
+        Optional<UserEntity> userEntityOptional = userDetailsRepository.findFirstByName(userEntity.getName());
         if(userEntityOptional.isPresent()) {
             return userDetailsRepository.save(userEntity);
         }
         else {
-            throw new RuntimeException("user not found");
+            log.error("user not found");
+            return new UserEntity();
         }
     }
 
     public UserEntity getUser(final String name){
-        Optional<UserEntity> userEntityOptional = userDetailsRepository.findByName(name);
+        Optional<UserEntity> userEntityOptional = userDetailsRepository.findFirstByName(name);
         if(userEntityOptional.isPresent())
             return userEntityOptional.get();
         else {
-            throw new RuntimeException("user not found");
+            log.error("user not found");
+            return new UserEntity();
         }
 
     }
