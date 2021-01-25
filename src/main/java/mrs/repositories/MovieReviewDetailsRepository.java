@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface MovieReviewDetailsRepository extends JpaRepository<MovieReviewEntity, Integer> {
@@ -23,6 +24,7 @@ public interface MovieReviewDetailsRepository extends JpaRepository<MovieReviewE
     @Query("SELECT AVG(e.reviewScore) FROM MovieReviewEntity e WHERE e.movieName = :movieName")
     Double findAverageReviewScoreByMovieName(String movieName);
 
+    Optional<MovieReviewEntity> findFirstByUserNameAndMovieName(String userName, String movieName);
 
 
 
