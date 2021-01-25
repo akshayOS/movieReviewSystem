@@ -1,5 +1,6 @@
 package mrs.services.impl;
 
+import lombok.extern.log4j.Log4j2;
 import mrs.constants.UserConstants;
 import mrs.models.entity.MovieEntity;
 import mrs.models.entity.MovieReviewEntity;
@@ -10,10 +11,14 @@ import mrs.services.MovieService;
 import mrs.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import sun.rmi.runtime.Log;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 @Service
+@Log4j2
 public class MovieReviewServiceImpl implements MovieReviewService {
 
     private final UserService userService;
@@ -33,8 +38,18 @@ public class MovieReviewServiceImpl implements MovieReviewService {
 
     @Override
     public MovieReviewEntity addReview(String userName, String movieName, Integer rating) {
+
+        if(movieReviewRepositoryService.ifReviewExist(userName, movieName))
+        {log.error("Multiple review not allowed");
+        return new MovieReviewEntity();}
         UserEntity userEntity = userService.getUserByName(userName);
+        System.out.println(userEntity);
         MovieEntity movieEntity = movieService.getMovie(movieName);
+        System.out.println(movieEntity);
+        if( movieEntity.getReleaseYear() > Calendar.getInstance().get(Calendar.YEAR))
+        {log.error("release year is in future");
+        return new MovieReviewEntity();}
+
         if (userEntity.getCapability().equals(UserConstants.USER_CAPABILITY_CRITIC))
             rating = rating * 2;
         MovieReviewEntity movieReviewEntity = movieReviewRepositoryService.addReview(
@@ -43,12 +58,15 @@ public class MovieReviewServiceImpl implements MovieReviewService {
         if (userEntity.getReviewCount() + 1 == UserConstants.USER_THRESHOLD_COUNT_FOR_CRITIC)
             userService.upgradeUser(UserEntity.builder()
                                               .id(userEntity.getId())
+                                              .name(userName)
                                               .capability(UserConstants.USER_CAPABILITY_CRITIC)
                                               .reviewCount(userEntity.getReviewCount() + 1)
                                               .build());
         else
             userService.upgradeUser(UserEntity.builder()
                                               .id(userEntity.getId())
+                                              .name(userName)
+                                              .capability(userEntity.getCapability())
                                               .reviewCount(userEntity.getReviewCount() + 1)
                                               .build());
 
