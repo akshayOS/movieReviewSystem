@@ -1,5 +1,6 @@
 package mrs.models.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,16 +13,22 @@ import java.io.Serializable;
 @Table(name = "user_details")
 @Data
 @Builder
-public class UserEntity implements Serializable {
+@NoArgsConstructor
+@AllArgsConstructor
+public class UserEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
     @GenericGenerator(name = "native", strategy = "native")
+    @Column(name = "id")
     private Integer id;
 
+    @Column(name = "review_count")
     private Integer reviewCount;
 
+    @Column(name = "capability")
     private String capability;
 
+    @Column(name = "name")
     private String name;
 }
